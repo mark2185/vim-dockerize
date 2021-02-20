@@ -16,6 +16,6 @@ Docker is needed, obviously.
 
 ### **Variables**
 
-- **`g:dockerize_target_container`** a container against which all commands will be executed, default: ''
-- **`g:dockerize_run_usr_args`** `docker run` user arguments, default: ''
-- **`g:dockerize_exec_usr_args`** `docker exec` user arguments, default: ''
+- **`g:dockerize_target_container`** a container against which all commands will be executed, default: `''`
+- **`g:dockerize_run_usr_args`** `docker run` user arguments, default: `''`
+- **`g:dockerize_exec_usr_args`** `docker exec` user arguments, default: `''`
