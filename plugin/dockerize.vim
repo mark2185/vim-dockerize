@@ -1,6 +1,6 @@
 " dockerize.vim - Run commands in docker containers
 " Maintainer: Luka Markušić
-" Version:    0.0.2
+" Version:    0.0.3
 
 if exists('g:loaded_dockerize_plugin')
     finish
@@ -9,26 +9,18 @@ let g:loaded_dockerize_plugin = 1
 
 let g:dockerize_target_container = get( g:, 'dockerize_target_container', '' )
 let g:dockerize_run_usr_args     = get( g:, 'dockerize_run_usr_args'    , '' )
-let g:dockerize_exec_usr_args    = get( g:, '-w/home/build'             , '' )
+let g:dockerize_exec_usr_args    = get( g:, 'dockerize_exec_usr_args'   , '' )
 
 " TODO: cannot use flag --tty
 let g:dockerize_run_usr_args = '--interactive --detach --rm -u$(id -u):$(id -g) -v$HOME/.bashrc:$HOME/.bashrc -v$(pwd):/home/source:ro -v$HOME/.conan:$HOME/.conan -v$HOME/.ssh:$HOME/.ssh -v/etc/passwd:/etc/passwd'
 let g:dockerize_exec_usr_args = '-w/home/build'
 
 function! s:get_docker_images( arg_lead, cmd_line, cursor_pos ) abort
-    let l:output_list = []
-    for entry in systemlist( 'docker images' )[ 1: ]
-        call add( l:output_list, split( entry )[ 0 ] )
-    endfor
-    return join( l:output_list, "\n" )
+    return join( systemlist( 'docker images --format "{{.Repository}}"' ), "\n" )
 endfunction
 
 function! s:get_docker_containers( arg_lead, cmd_line, cursor_pos ) abort
-    let l:output_list = []
-    for entry in systemlist( 'docker ps -a' )[ 1: ]
-        call add( l:output_list, split( entry )[ -1 ] )
-    endfor
-    return join( l:output_list, "\n" )
+    return join( systemlist( 'docker ps --format "{{.Names}}"' ), "\n" )
 endfunction
 
 function! s:dockerize_change_target( container_name ) abort
