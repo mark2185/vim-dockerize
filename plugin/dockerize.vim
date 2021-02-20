@@ -29,8 +29,8 @@ endfunction
 
 function! s:run_docker_image( image, ... ) abort
     let l:command = printf( "docker run %s %s", g:dockerize_run_usr_args, a:image )
-
-    let g:dockerize_target_container = systemlist( l:command )[ 0 ]
+    call system( l:command )
+    let g:dockerize_target_container = systemlist( 'docker ps -n1 --format "{{.Names}}"' )[ 0 ]
     echom 'Started container ' . g:dockerize_target_container
 endfunction
 
@@ -55,7 +55,31 @@ function! s:run_docker_shell( ... ) abort
     echom 'Running: ' . l:cmd
 endfunction
 
+" TODO: use headless dispatch
+function! s:stop_docker_container( ... ) abort
+    let l:container_name = get( a:, '1', g:dockerize_target_container )
+    echom 'Stopping container ' . l:container_name . '...'
+    call systemlist( 'docker stop ' . l:container_name )
+    echom 'Stopped'
+endfunction
+
+" TODO: run image under cursor
+function! s:list_images() abort
+    let l:s_out = system( 'docker images' )
+    cgetexpr l:s_out
+    copen
+endfunction
+
+function! s:list_running_containers() abort
+    let l:s_out = system( 'docker ps -a' )
+    cgetexpr l:s_out
+    copen
+endfunction
+
 command! -nargs=+ -complete=custom,s:get_docker_images     DockerizeRun          call s:run_docker_image(<f-args>)
+command! -nargs=? -complete=custom,s:get_docker_containers DockerizeStop         call s:stop_docker_container(<f-args>)
+command! -nargs=0                                          DockerizeImages       call s:list_images()
+command! -nargs=0                                          DockerizeContainers   call s:list_running_containers()
 command! -nargs=+ -complete=custom,s:get_docker_containers DockerizeExec         call s:run_command_in_docker(<f-args>)
 command! -nargs=? -complete=custom,s:get_docker_containers DockerizeShell        call s:run_docker_shell(<f-args>)
 command! -nargs=1 -complete=custom,s:get_docker_containers DockerizeChangeTarget call s:dockerize_change_target(<f-args>)

@@ -9,7 +9,10 @@ Docker is needed, obviously.
 
 ### **Commands**
 
+- **`:DockerizeImages`** list available images
+- **`:DockerizeContainers`** list running containers
 - **`:DockerizeRun`** runs a docker image
+- **`:DockerizeStop`** stops a given docker container ( stops target container if called with no arguments )
 - **`:DockerizeExec`** docker exec a command for the target container
 - **`:DockerizeChangeTarget`** change target container
 - **`:DockerizeShell`** start a shell in target container
