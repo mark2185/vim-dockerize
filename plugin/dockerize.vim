@@ -1,6 +1,6 @@
 " dockerize.vim - Run commands in docker containers
 " Maintainer: Luka Markušić
-" Version:    0.0.3
+" Version:    0.0.4
 
 if exists('g:loaded_dockerize_plugin')
     finish
@@ -76,10 +76,23 @@ function! s:list_running_containers() abort
     copen
 endfunction
 
+function! s:inspect_container( ... ) abort
+    let l:container_name = get( a:, '1', g:dockerize_target_container )
+    if ( l:container_name ==# '' )
+        echom "Missing target container!"
+        return
+    endif
+    let l:s_out = system( 'docker inspect ' . l:container_name )
+    cgetexpr l:s_out
+    copen
+endfunction
+
+command! -nargs=0 DockerizeImages     call s:list_images()
+command! -nargs=0 DockerizeContainers call s:list_running_containers()
+command! -nargs=? -complete=custom,s:get_docker_containers DockerizeInspect    call s:inspect_container(<f-args>)
+
 command! -nargs=+ -complete=custom,s:get_docker_images     DockerizeRun          call s:run_docker_image(<f-args>)
 command! -nargs=? -complete=custom,s:get_docker_containers DockerizeStop         call s:stop_docker_container(<f-args>)
-command! -nargs=0                                          DockerizeImages       call s:list_images()
-command! -nargs=0                                          DockerizeContainers   call s:list_running_containers()
 command! -nargs=+ -complete=custom,s:get_docker_containers DockerizeExec         call s:run_command_in_docker(<f-args>)
 command! -nargs=? -complete=custom,s:get_docker_containers DockerizeShell        call s:run_docker_shell(<f-args>)
 command! -nargs=1 -complete=custom,s:get_docker_containers DockerizeChangeTarget call s:dockerize_change_target(<f-args>)
