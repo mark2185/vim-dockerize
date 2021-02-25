@@ -16,7 +16,7 @@ Docker is needed, obviously.
 - **`:DockerizeStop`** stops a given docker container ( stops target container if called with no arguments )
 - **`:DockerizeExec`** docker exec a command for the target container
 - **`:DockerizeChangeTarget`** change target container
-- **`:DockerizeShell`** start a shell in target container
+- **`:DockerizeShell`** start a shell (default is `&shell`) in target container
 
 ### **Variables**
 
