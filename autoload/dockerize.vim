@@ -31,7 +31,7 @@ function! dockerize#run_docker_shell( ... ) abort
         echom "Missing target container!"
         return
     endif
-    execute 'terminal !' . printf( "docker exec %s -i %s", g:dockerize_exec_usr_args, a:0 ? a:1 : g:dockerize_target_container )
+    execute 'terminal ' . printf( "docker exec %s -it %s /bin/bash", g:dockerize_exec_usr_args, a:0 ? a:1 : g:dockerize_target_container )
 endfunction
 
 function! dockerize#stop_docker_container( ... ) abort
