@@ -22,7 +22,7 @@ endfunction
 function! dockerize#run_docker_image_callback( channel, message )
     let g:dockerize_target_container = systemlist( 'docker ps -n1 --format "{{.Names}}"' )[ 0 ]
     echom 'Started ' . g:dockerize_target_container
-    let g:docker_mode = v:true
+    let g:dockerize_mode = v:true
 endfunction
 
 function! dockerize#run_docker_image( image, ... ) abort
@@ -30,9 +30,18 @@ function! dockerize#run_docker_image( image, ... ) abort
     let s:job = job_start( split( l:command ), { "callback" : "dockerize#run_docker_image_callback" } )
 endfunction
 
+function! dockerize#stop_docker_image_callback( channel, message )
+    echom 'Stopped.'
+endfunction
+
 function! dockerize#stop_docker_container( ... ) abort
     let l:container_name = get( a:, '1', g:dockerize_target_container )
-    let s:job = job_start( [ 'docker', 'stop', l:container_name ], { "callback" : { ch, msg -> execute( 'echom Stopped.' ) } } )
+    echom 'Stopping...'
+    if !a:0
+        let g:dockerize_target_container = ''
+        let g:dockerize_mode = v:false
+    endif
+    let s:job = job_start(['docker', 'stop', l:container_name], {'callback' : "dockerize#stop_docker_image_callback" })
 endfunction
 
 function! dockerize#run_command_in_docker( ... ) abort
@@ -62,6 +71,6 @@ function! dockerize#inspect_container( ... ) abort
         echom "Missing target container!"
         return
     endif
-    return 'docker inspect ' . a:0 ? a:1 : g:dockerize_target_container
+    return 'docker inspect ' . ( a:0 ? a:1 : g:dockerize_target_container )
 endfunction
 
