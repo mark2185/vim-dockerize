@@ -15,11 +15,11 @@ Tab-completion for image names and container names is available.
 - **`:DockerizeImages`** list available images
 - **`:DockerizeContainers`** list all containers
 - **`:DockerizeInspect`** inspect a container
-- **`:DockerizeRun`** runs a docker image and sets it as currently active container
+- **`:DockerizeRun`** runs a docker image and sets it as currently active container, using `g:cmake_run_usr_args`
 - **`:DockerizeStop`** stops a given docker container ( stops target container if called with no arguments ), resets currently active container
-- **`:DockerizeExec`** docker exec a command for the target container
-- **`:DockerizeChangeTarget`** change target container
-- **`:DockerizeShell`** start a shell (default is `/bin/bash`) in target container
+- **`:DockerizeExec`** docker exec a command for the target container, using `g:cmake_exec_usr_args`
+- **`:DockerizeChangeTarget`** change target container, prints out current target if no args given
+- **`:DockerizeShell`** start a given shell in target container. Default is `/bin/bash`
 
 ### **Variables**
 
@@ -41,7 +41,7 @@ nnoremap <leader>dt :DockerizeChangeTarget
 
 ### Examples
 
-If you want to build your code in docker, use this for inspiration:
+If you want to build your code in docker, use this as a template:
 ```
 let g:dockerize_run_usr_args = expand(
             \ join([

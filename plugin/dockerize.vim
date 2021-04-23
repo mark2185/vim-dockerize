@@ -22,6 +22,7 @@ let g:dockerize_mode             = get( g:, 'dockerize_mode'            , v:fals
 " • v verbose ( show stopped containers )
 " • dd stop a container
 " • X delete a container
+" cmake kits for building in docker
 
 if g:dockerize_enable_mappings
     nnoremap <leader>ds :DockerizeShell<CR>
@@ -32,13 +33,13 @@ if g:dockerize_enable_mappings
     nnoremap <leader>dt :DockerizeChangeTarget 
 endif
 
-command! -nargs=0                                                           DockerizeImages       call utils#exec#executeCommand( dockerize#list_images() )
-command! -nargs=0                                                           DockerizeContainers   call utils#exec#executeCommand( dockerize#list_containers() )
-command! -nargs=? -complete=custom,utils#autocomplete#get_docker_containers DockerizeInspect      call utils#exec#executeCommand( dockerize#inspect_container(<f-args>) )
+command! -nargs=0                                                           DockerizeImages       call dockerize#getImages()
+command! -nargs=0                                                           DockerizeContainers   call dockerize#getContainers()
+command! -nargs=? -complete=custom,utils#autocomplete#get_docker_containers DockerizeInspect      call dockerize#inspectContainer(<f-args>)
 
 command! -nargs=+ -complete=custom,utils#autocomplete#get_docker_images     DockerizeRun          call dockerize#run_docker_image(<f-args>)
 command! -nargs=1 -complete=custom,utils#autocomplete#get_docker_containers DockerizeRemove       call dockerize#remove_docker_container(<f-args>)
 command! -nargs=? -complete=custom,utils#autocomplete#get_docker_containers DockerizeStop         call dockerize#stop_docker_container(<f-args>)
 command! -nargs=+ -complete=custom,utils#autocomplete#get_docker_containers DockerizeExec         call utils#exec#executeCommand( dockerize#run_command_in_docker(<f-args>) )
-command! -nargs=? -complete=custom,utils#autocomplete#get_docker_containers DockerizeShell        call dockerize#run_docker_shell(<f-args>)
+command!          -complete=custom,utils#autocomplete#get_docker_containers DockerizeShell        call dockerize#run_docker_shell()
 command! -nargs=? -complete=custom,utils#autocomplete#get_docker_containers DockerizeChangeTarget call dockerize#dockerize_change_target(<f-args>)
