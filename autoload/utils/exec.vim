@@ -15,14 +15,14 @@ function! s:createQuickfix() abort
     endif
 
     execute 'cgetbuffer ' . l:bufnr
-    setlocal bufhidden=hide buftype=nofile buflisted nolist
-    setlocal noswapfile nowrap nomodifiable
 
     call setqflist( [], 'a', { 'title' : s:dockerize_job[ 'cmd' ] } )
 endfunction
 
 function! s:createBuffer() abort
-    silent execute 'belowright 10split ' . s:dockerize_buffer
+    silent execute 'bo 10split ' . s:dockerize_buffer
+    setlocal bufhidden=hide buftype=nofile buflisted nolist
+    setlocal noswapfile nowrap nomodifiable
 
     nnoremap <silent> <buffer> <c-c> :call utils#exec#stopJob()<CR>
     return winbufnr(0)
@@ -64,24 +64,14 @@ endfunction
 function! s:startJob( cmd ) abort
     let l:bufnr = s:createBuffer()
     let l:job = job_start( a:cmd, 
-                \ { 'out_io' : 'buffer', 'out_buf' : l:bufnr,
-                \   'err_io' : 'buffer', 'err_buf' : l:bufnr,
+                \ { 'out_io' : 'buffer', 'out_buf' : l:bufnr, 'out_modifiable' : 0,
+                \   'err_io' : 'buffer', 'err_buf' : l:bufnr, 'err_modifiable' : 0,
                 \   'close_cb' : function('s:jobClosed') } )
     let s:dockerize_job = { 'job' : l:job, 'cmd' : join( a:cmd ) }
 endfunction
 
 function! utils#exec#executeCommand( ... ) abort
-    "if ( !a:0 )
-    "    echom "Nothing to execute!"
-    "    return
-    "endif
-
-    "call setqflist( [], 'r', { 'title' : a:1 } )
-    "let s:job = job_start( split(a:1), { 'callback' : { ch, msg -> execute( 'caddexpr msg' ) } } )
- 
-    "bo copen 20
-    "return
-
+    cclose
     let l:openbufnr = bufnr(s:dockerize_buffer)
     if l:openbufnr != -1
         call utils#common#Warning('Async execute is already running')
