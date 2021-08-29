@@ -1,4 +1,4 @@
-function! dockerize#dockerize_change_target( ... ) abort
+function! dockerize#DockerizeChangeTarget( ... ) abort
     if !a:0
         if g:dockerize_target_container !=# ''
             echo 'Current container: ' . g:dockerize_target_container
@@ -9,14 +9,6 @@ function! dockerize#dockerize_change_target( ... ) abort
     endif
     let g:dockerize_target_container = a:1
     " let g:dockerize_mode = v:true
-endfunction
-
-function! dockerize#getImages( ... ) abort
-    call utils#exec#executeCommand( 'docker images' )
-endfunction
-
-function! dockerize#getContainers( ... ) abort
-    call utils#exec#executeCommand( 'docker ps -a' )
 endfunction
 
 function! dockerize#run_docker_image_callback( channel, message )
@@ -60,18 +52,20 @@ function! dockerize#run_command_in_docker( ... ) abort
     return printf( "docker exec %s -i %s %s", g:dockerize_exec_usr_args, g:dockerize_target_container, join( a:000, ' ' ) )
 endfunction
 
-function! dockerize#run_docker_shell() abort
-    if ( g:dockerize_target_container ==# '' )
+function! dockerize#RunShell( ... ) abort
+    let l:container_name = get( a:, '1', g:dockerize_target_container )
+    if ( empty( l:container_name ) )
         echom "Missing target container!"
         return
     endif
-    execute 'bo terminal ++close ' . printf( "docker exec %s -it %s %s", g:dockerize_exec_usr_args, g:dockerize_target_container, g:dockerize_shell )
+    let l:cmd = 'bo terminal ' . g:dockerize_term_close_on_exit ? '++close' : ''
+    execute 'bo terminal ++close ' . printf( "docker exec %s -it %s %s", g:dockerize_exec_usr_args, l:container_name, g:dockerize_shell )
 endfunction
 
 function! dockerize#remove_docker_container( ... ) abort
     let l:container_name = get( a:, '1', g:dockerize_target_container )
     echom 'Removing container ' . l:container_name . '...'
-    call utils#exec#executeCommand( 'docker rm ' . l:container_name )
+    call utils#exec#executeSyncCommand( 'docker rm ' . l:container_name )
 endfunction
 
 function! dockerize#inspectContainer( ... ) abort
@@ -80,6 +74,5 @@ function! dockerize#inspectContainer( ... ) abort
         echom "Missing target container!"
         return
     endif
-    call utils#exec#executeCommand( 'docker inspect ' . l:container  )
+    call utils#exec#executeSyncCommand( 'docker inspect ' . l:container  )
 endfunction
-

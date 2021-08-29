@@ -1,8 +1,8 @@
-function! utils#autocomplete#get_docker_images( arg_lead, cmd_line, cursor_pos ) abort
-    return join( systemlist( 'docker images --filter "dangling=false" --format "{{.Repository}}"' ), "\n" )
+function! utils#autocomplete#CompleteDockerImages( arg_lead, cmd_line, cursor_pos ) abort
+    return systemlist( 'docker images --filter "dangling=false" --format "{{.Repository}}"' )
 endfunction
 
-function! utils#autocomplete#get_docker_containers( arg_lead, cmd_line, cursor_pos ) abort
-    return join( systemlist( 'docker ps --format "{{.Names}}"' ), "\n" )
+function! utils#autocomplete#CompleteDockerContainers( arg_lead, cmd_line, cursor_pos ) abort
+    return systemlist( 'docker ps --format "{{.Names}}"' )
 endfunction
 

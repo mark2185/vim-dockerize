@@ -70,7 +70,10 @@ function! s:startJob( cmd ) abort
     let s:dockerize_job = { 'job' : l:job, 'cmd' : join( a:cmd ) }
 endfunction
 
-function! utils#exec#executeCommand( ... ) abort
+function! utils#exec#executeSyncCommand() abort
+endfunction
+
+function! utils#exec#executeAsyncCommand( ... ) abort
     cclose
     let l:openbufnr = bufnr(s:dockerize_buffer)
     if l:openbufnr != -1
