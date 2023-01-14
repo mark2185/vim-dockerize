@@ -1,3 +1,7 @@
+# **NOTE: OBSOLETE**
+
+Eh, solved my original problem in a different fashion.
+
 # vim-dockerize
 A plugin for running commands in docker containers
 
