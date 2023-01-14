@@ -5,7 +5,7 @@ function! s:Warning(msg) abort
                 \ echohl None
 endfunction
 
-let s:dockerize_buffer = 'Dockerize'
+let s:dockerize_buffer = 'DockerizeBuffer'
 let s:dockerize_job    = {}
 
 function! s:createQuickfix() abort
@@ -25,7 +25,7 @@ function! s:createBuffer() abort
     setlocal noswapfile nowrap nomodifiable
 
     nnoremap <silent> <buffer> <c-c> :call utils#exec#stopJob()<CR>
-    return winbufnr(0)
+    return bufnr()
 endfunction
 
 function! s:deleteBuffer() abort
@@ -70,7 +70,8 @@ function! s:startJob( cmd ) abort
     let s:dockerize_job = { 'job' : l:job, 'cmd' : join( a:cmd ) }
 endfunction
 
-function! utils#exec#executeSyncCommand() abort
+function! utils#exec#executeSyncCommand(cmd) abort
+
 endfunction
 
 function! utils#exec#executeAsyncCommand( ... ) abort

@@ -62,10 +62,21 @@ function! dockerize#RunShell( ... ) abort
     execute 'bo terminal ++close ' . printf( "docker exec %s -it %s %s", g:dockerize_exec_usr_args, l:container_name, g:dockerize_shell )
 endfunction
 
-function! dockerize#remove_docker_container( ... ) abort
+" TODO:
+function! dockerize#remove_image( ... ) abort
+    "let l:container_name = get( a:, '1', g:dockerize_target_container )
+    "call utils#exec#executeAsyncCommand( 'docker rm ' . l:container_name )
     let l:container_name = get( a:, '1', g:dockerize_target_container )
     echom 'Removing container ' . l:container_name . '...'
-    call utils#exec#executeSyncCommand( 'docker rm ' . l:container_name )
+    let s:job = job_start(['docker', 'rm', l:container_name], {'callback' : "dockerize#stop_docker_image_callback" })
+endfunction
+
+function! dockerize#remove_docker_container( ... ) abort
+    "let l:container_name = get( a:, '1', g:dockerize_target_container )
+    "call utils#exec#executeAsyncCommand( 'docker rm ' . l:container_name )
+    let l:container_name = get( a:, '1', g:dockerize_target_container )
+    echom 'Removing container ' . l:container_name . '...'
+    let s:job = job_start(['docker', 'rm', l:container_name], {'callback' : "dockerize#stop_docker_image_callback" })
 endfunction
 
 function! dockerize#inspectContainer( ... ) abort

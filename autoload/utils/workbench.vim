@@ -20,10 +20,10 @@ endfunction
 function s:ReloadUI( ... ) abort
     if win_getid() != s:workbench_winid
         return
-    end
+    endif
 
     let l:cursor_position = getcurpos( s:workbench_winid )
-    set modifiable
+    call setbufvar('DockerizeWorkbench', '&modifiable', 1)
     %delete _
 
     call s:AppendLineToWorkbench( '# Press g? to toggle help', 0 )
@@ -57,7 +57,7 @@ function s:ReloadUI( ... ) abort
         endif
     endfor
 
-    set nomodifiable
+    call setbufvar('DockerizeWorkbench', '&modifiable', 0)
     call setpos('.', l:cursor_position )
 endfunction
 
@@ -65,7 +65,8 @@ let s:mappings = {
             \ 'start': { 'key': 'r' },
             \ 'stop' : { 'key': 'X' },
             \ 'shell': { 'key': 's' },
-            \ 'activate': { 'key': 't' } }
+            \ 'activate': { 'key': 't' },
+            \ 'remove' : { 'key': 'dd' } }
 
 function! s:MappingsResolver( key ) abort
     function! CursorOnImage() closure
@@ -105,6 +106,12 @@ function! s:MappingsResolver( key ) abort
         if CursorOnContainer()
             let l:container = getline( '.' )->split()[-1]
             execute 'DockerizeStop ' . l:container
+        endif
+        " TODO: remove image as well
+    elseif a:key ==# 'dd' " container remove
+        if CursorOnContainer()
+            let l:container = getline( '.' )->split()[-1]
+            execute 'DockerizeRemove ' . l:container
         endif
     endif
 endfunction
